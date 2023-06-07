@@ -1,8 +1,8 @@
 class Customer
 {
-    private int _id;
-    private string _firstName;
-    private string _lastName;
-    private string _email;
-    private string address;
+    public int Id { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Email { get; set; }
+    public string Address { get; set; }
 }

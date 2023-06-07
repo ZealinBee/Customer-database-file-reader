@@ -25,14 +25,7 @@ class CustomerDatabase
         Customer existingCustomer = SearchCustomerById(customerToUpdate.Id);
         if (existingCustomer != null)
         {
-            Customer updatedCustomer = new Customer
-            {
-                Id = existingCustomer.Id,
-                FirstName = customerToUpdate.FirstName,
-                LastName = customerToUpdate.LastName,
-                Email = customerToUpdate.Email,
-                Address = customerToUpdate.Address
-            };
+            Customer updatedCustomer = new Customer(existingCustomer.Id, customerToUpdate.FirstName, customerToUpdate.LastName, customerToUpdate.Email, customerToUpdate.Address);
             int index = _customers.IndexOf(existingCustomer);
             _customers[index] = updatedCustomer;
             Console.WriteLine($"Customer with the Id of {customerToUpdate.Id} updated successfully");

@@ -1,23 +1,26 @@
 class FileHelper
 {
-    private const string path = "../customers.csv";
-
-    public static List<string[]> ReadFromFile(string path)
+    public static List<Customer> ReadFromFile(string path)
     {
         try
         {
-            List<string[]> rows = new List<string[]>();
-
+            List<Customer> customers = new List<Customer>();
             using (var reader = new StreamReader(path))
             {
                 while (!reader.EndOfStream)
                 {
                     string line = reader.ReadLine();
                     string[] values = line.Split(',');
-                    rows.Add(values);
+                    int id = int.Parse(values[0]);
+                    string firstName = values[1];
+                    string lastName = values[2];
+                    string email = values[3];
+                    string address = values[4];
+                    Customer customer = new Customer(id, firstName, lastName, email, address);
+                    customers.Add(customer);
                 }
             }
-            return rows;
+            return customers;
 
         }
         catch (Exception ex)
@@ -30,7 +33,7 @@ class FileHelper
     {
         try
         {
-            using (var writer = new StreamWriter(filePath))
+            using (var writer = new StreamWriter(filePath, true))
             {
                 foreach (var row in rows)
                 {
@@ -38,8 +41,6 @@ class FileHelper
                     writer.WriteLine(line);
                 }
             }
-
-            Console.WriteLine("Write to file successful.");
         }
         catch (Exception ex)
         {

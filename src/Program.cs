@@ -2,12 +2,21 @@
 
 class Program
 {
-    static CustomerDatabase customerDatabase = new CustomerDatabase();
+    static CustomerDatabase customerDatabase;
+    private const string path = "customers.csv";
 
     static void Main()
     {
+        List<Customer> customerData = FileHelper.ReadFromFile(path);
+        if (customerData == null)
+        {
+            customerDatabase = new CustomerDatabase();
+        }
+        else
+        {
+            customerDatabase = new CustomerDatabase(customerData);
+        }
         Console.WriteLine("Welcome to the Customer Database!");
-
         bool exit = false;
         while (!exit)
         {
@@ -63,7 +72,10 @@ class Program
 
         Console.Write("Address: ");
         string address = Console.ReadLine();
-
+        List<string[]> strings = new List<string[]>();
+        string[] values = new string[] { id.ToString(), firstName, lastName, email, address };
+        strings.Add(values);
+        FileHelper.WriteFile(path, strings);
         Customer newCustomer = new Customer(id, firstName, lastName, email, address);
         customerDatabase.AddCustomer(newCustomer);
     }
@@ -89,7 +101,10 @@ class Program
 
             Console.Write("Address: ");
             string address = Console.ReadLine();
-
+            List<string[]> strings = new List<string[]>();
+            string[] values = new string[] { id.ToString(), firstName, lastName, email, address };
+            strings.Add(values);
+            FileHelper.WriteFile(path, strings);
             Customer updatedCustomer = new Customer(id, firstName, lastName, email, address);
             customerDatabase.UpdateCustomer(updatedCustomer);
         }

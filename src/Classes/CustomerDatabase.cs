@@ -1,6 +1,11 @@
 class CustomerDatabase
 {
-    private List<Customer> _customers = new List<Customer>();
+    private List<Customer> _customers;
+
+    public CustomerDatabase(List<Customer> customers = null)
+    {
+        _customers = customers ?? new List<Customer>();
+    }
 
     public void AddCustomer(Customer customer)
     {

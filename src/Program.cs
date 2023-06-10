@@ -72,10 +72,6 @@ class Program
 
         Console.Write("Address: ");
         string address = Console.ReadLine();
-        List<string[]> strings = new List<string[]>();
-        string[] values = new string[] { id.ToString(), firstName, lastName, email, address };
-        strings.Add(values);
-        FileHelper.WriteFile(path, strings);
         Customer newCustomer = new Customer(id, firstName, lastName, email, address);
         customerDatabase.AddCustomer(newCustomer);
     }
@@ -101,10 +97,6 @@ class Program
 
             Console.Write("Address: ");
             string address = Console.ReadLine();
-            List<string[]> strings = new List<string[]>();
-            string[] values = new string[] { id.ToString(), firstName, lastName, email, address };
-            strings.Add(values);
-            FileHelper.WriteFile(path, strings);
             Customer updatedCustomer = new Customer(id, firstName, lastName, email, address);
             customerDatabase.UpdateCustomer(updatedCustomer);
         }

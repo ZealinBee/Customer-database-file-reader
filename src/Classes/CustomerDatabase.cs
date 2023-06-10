@@ -1,6 +1,7 @@
 class CustomerDatabase
 {
     private List<Customer> _customers;
+    static string path = "customers.csv";
 
     public CustomerDatabase(List<Customer> customers = null)
     {
@@ -16,6 +17,7 @@ class CustomerDatabase
         else
         {
             _customers.Add(customer);
+            FileHelper.WriteFile(path, _customers);
             Console.WriteLine($"Customer with the email of {customer.Email} added successfully");
         }
     }
@@ -33,6 +35,7 @@ class CustomerDatabase
             Customer updatedCustomer = new Customer(existingCustomer.Id, customerToUpdate.FirstName, customerToUpdate.LastName, customerToUpdate.Email, customerToUpdate.Address);
             int index = _customers.IndexOf(existingCustomer);
             _customers[index] = updatedCustomer;
+            FileHelper.WriteFile(path, _customers);
             Console.WriteLine($"Customer with the Id of {customerToUpdate.Id} updated successfully");
         }
         else
@@ -47,7 +50,9 @@ class CustomerDatabase
         Customer customerToDelete = SearchCustomerById(id);
         if (customerToDelete != null)
         {
+            FileHelper.WriteFile(path, _customers);
             _customers.Remove(customerToDelete);
+            Console.WriteLine("Customer deleted successfully");
         }
         else
         {

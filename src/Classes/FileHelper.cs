@@ -29,16 +29,15 @@ class FileHelper
             return null;
         }
     }
-    public static void WriteFile(string filePath, List<string[]> rows)
+    public static void WriteFile(string filePath, List<Customer> customers)
     {
         try
         {
-            using (var writer = new StreamWriter(filePath, true))
+            using (var writer = new StreamWriter(filePath))
             {
-                foreach (var row in rows)
+                foreach (var customer in customers)
                 {
-                    string line = string.Join(",", row);
-                    writer.WriteLine(line);
+                    writer.WriteLine($"{customer.Id},{customer.FirstName},{customer.LastName},{customer.Email},{customer.Address}");
                 }
             }
         }

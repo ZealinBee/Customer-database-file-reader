@@ -2,6 +2,8 @@ class CustomerDatabase
 {
     private List<Customer> _customers;
     static string path = "customers.csv";
+    private static Stack<Action> _redoStack = new Stack<Action>();
+    private static Stack<Action> _undoStack = new Stack<Action>();
 
     public CustomerDatabase(List<Customer> customers = null)
     {
@@ -16,9 +18,16 @@ class CustomerDatabase
         }
         else
         {
+            Action addAction = new Action(() =>
+            {
+                _customers.Remove(customer);
+                FileHelper.WriteFile(path, _customers);
+                Console.WriteLine($"Undo: Customer with the email {customer.Email} removed");
+            });
+            _undoStack.Push(addAction);
             _customers.Add(customer);
             FileHelper.WriteFile(path, _customers);
-            Console.WriteLine($"Customer with the email of {customer.Email} added successfully");
+            Console.WriteLine($"Customer with the email {customer.Email} added successfully");
         }
     }
 
@@ -29,10 +38,17 @@ class CustomerDatabase
 
     public void UpdateCustomer(Customer customerToUpdate)
     {
+        // Basically first gets the ID of the customer, then find the existing customer by ID, then update the customer based on the input.
         Customer existingCustomer = SearchCustomerById(customerToUpdate.Id);
         if (existingCustomer != null)
         {
             Customer updatedCustomer = new Customer(existingCustomer.Id, customerToUpdate.FirstName, customerToUpdate.LastName, customerToUpdate.Email, customerToUpdate.Address);
+            Action updateAction = new Action(() =>
+            {
+                this.UpdateCustomer(existingCustomer);
+                Console.WriteLine($"Undo: Customer with the {existingCustomer.Id} was reverted back");
+            });
+            _undoStack.Push(updateAction);
             int index = _customers.IndexOf(existingCustomer);
             _customers[index] = updatedCustomer;
             FileHelper.WriteFile(path, _customers);
@@ -42,7 +58,6 @@ class CustomerDatabase
         {
             Console.WriteLine("Failed to update, customer not found");
         }
-
     }
 
     public void DeleteCustomer(int id)
@@ -50,9 +65,17 @@ class CustomerDatabase
         Customer customerToDelete = SearchCustomerById(id);
         if (customerToDelete != null)
         {
-            FileHelper.WriteFile(path, _customers);
+            Action deleteAction = new Action(() =>
+            {
+                _customers.Add(customerToDelete);
+                FileHelper.WriteFile(path, _customers);
+                Console.WriteLine($"Undo: Customer with the email {customerToDelete.Email} added back");
+            });
+            _undoStack.Push(deleteAction);
             _customers.Remove(customerToDelete);
-            Console.WriteLine("Customer deleted successfully");
+            FileHelper.WriteFile(path, _customers);
+            Console.WriteLine($"Customer with the email {customerToDelete.Email} deleted successfully");
+
         }
         else
         {
@@ -63,5 +86,30 @@ class CustomerDatabase
     public Customer SearchCustomerById(int id)
     {
         return _customers.Find(customer => customer.Id == id);
+    }
+
+    static void Redo()
+    {
+        if (_redoStack.Count > 0)
+        {
+
+        }
+        else
+        {
+            Console.WriteLine("Nothing to redo");
+        }
+    }
+
+    public void Undo()
+    {
+        if (_undoStack.Count > 0)
+        {
+            Action lastAction = _undoStack.Pop();
+            lastAction.Invoke();
+        }
+        else
+        {
+            Console.WriteLine("Nothing to undo");
+        }
     }
 }

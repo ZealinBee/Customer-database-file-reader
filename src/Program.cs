@@ -26,7 +26,9 @@ class Program
             Console.WriteLine("2. Update a customer");
             Console.WriteLine("3. Delete a customer");
             Console.WriteLine("4. Show all customers");
-            Console.WriteLine("5. Exit");
+            Console.WriteLine("5. Undo");
+            Console.WriteLine("6. Redo");
+            Console.WriteLine("7. Exit");
 
             string input = Console.ReadLine();
 
@@ -45,6 +47,9 @@ class Program
                     ShowAllCustomers();
                     break;
                 case "5":
+                    Undo();
+                    break;
+                case "7":
                     exit = true;
                     break;
                 default:
@@ -131,5 +136,10 @@ class Program
                 Console.WriteLine($"ID: {customer.Id}, Name: {customer.FirstName} {customer.LastName}, Email: {customer.Email}, Address: {customer.Address}");
             }
         }
+    }
+
+    static void Undo()
+    {
+        customerDatabase.Undo();
     }
 }

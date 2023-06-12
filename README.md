@@ -1,15 +1,30 @@
-# Customer Database Management
+# Introduction
 
-You are tasked with building a customer database application that can store and retrieve customer information. The application should allow users to add, update, delete, and search for customers using various criteria. In addition, the application should be designed to handle large amounts of data efficiently, so it should utilize appropriate data structures and algorithms.
+This project uses C# to create a customer database that allows the user to add, delete update customer and modify the csv file. It also includes undo and redo functionality. This is a console app.
 
-## Requirements
+## Table of Content
 
-Information of all the customers should be stored in a file called `customers.csv`. Initially, the program should read all the data from file and add data to the database. Any modification to the database should also recorded in the file `customers.csv`. The basic classes would be needed for this project (and create more if you have valid reasons to do so):
+- [Technologies](#technologies)
+- [Project Structure](#project-strucutre)
+- [Getting Started](#getting-started)
 
-1. Create `Customer` class: This class represents a customer and should contain properties such as Id, FirstName, LastName, Email, and Address. You can decide the suitable data types for each.
-2. Create `CustomerDatabase` class: This class should contain the data structure used to store customer information, such as a collection of customers. It should also contain methods for adding, reading, updating, deleting. Extra features:
-    - Email should be unique in the database.
-    - Implement a feature to search customers by their ID
-    - Implement an undo and redo feature which allows users to undo their last action or redo an action that they have undone
-3. Create `FileHelper` class: This class should contain methods for reading and writing customer information to and from the file system.
-4. Create `ExceptionHandler` class: This class should contain methods for handling exceptions that may occur during the execution of the application.
+## Technologies
+
+- C#
+
+## Project Structure
+
+```
+│   Program.cs
+   │
+   └─── Classes
+         │   Customer.cs
+         │   CustomerDatabase.cs
+         │   ExceptionHandler.cs
+         │   FileHelper.cs
+```
+
+## Getting Started
+
+Clone the repository from github with `git clone`  
+Run the code with `dotnet run`

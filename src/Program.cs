@@ -49,6 +49,9 @@ class Program
                 case "5":
                     Undo();
                     break;
+                case "6":
+                    Redo();
+                    break;
                 case "7":
                     exit = true;
                     break;
@@ -141,5 +144,11 @@ class Program
     static void Undo()
     {
         customerDatabase.Undo();
+    }
+
+    static void Redo()
+    {
+        Console.WriteLine("Redid");
+        customerDatabase.Redo();
     }
 }

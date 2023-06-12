@@ -25,6 +25,7 @@ class CustomerDatabase
                 Console.WriteLine($"Undo: Customer with the email {customer.Email} removed");
             });
             _undoStack.Push(addAction);
+            _redoStack.Clear();
             _customers.Add(customer);
             FileHelper.WriteFile(path, _customers);
             Console.WriteLine($"Customer with the email {customer.Email} added successfully");
@@ -49,6 +50,7 @@ class CustomerDatabase
                 Console.WriteLine($"Undo: Customer with the {existingCustomer.Id} was reverted back");
             });
             _undoStack.Push(updateAction);
+            _redoStack.Clear();
             int index = _customers.IndexOf(existingCustomer);
             _customers[index] = updatedCustomer;
             FileHelper.WriteFile(path, _customers);
@@ -72,6 +74,7 @@ class CustomerDatabase
                 Console.WriteLine($"Undo: Customer with the email {customerToDelete.Email} added back");
             });
             _undoStack.Push(deleteAction);
+            _redoStack.Clear();
             _customers.Remove(customerToDelete);
             FileHelper.WriteFile(path, _customers);
             Console.WriteLine($"Customer with the email {customerToDelete.Email} deleted successfully");
@@ -88,28 +91,31 @@ class CustomerDatabase
         return _customers.Find(customer => customer.Id == id);
     }
 
-    static void Redo()
-    {
-        if (_redoStack.Count > 0)
-        {
-
-        }
-        else
-        {
-            Console.WriteLine("Nothing to redo");
-        }
-    }
-
     public void Undo()
     {
         if (_undoStack.Count > 0)
         {
             Action lastAction = _undoStack.Pop();
             lastAction.Invoke();
+            _redoStack.Push(lastAction);
         }
         else
         {
             Console.WriteLine("Nothing to undo");
+        }
+    }
+
+    public void Redo()
+    {
+        if (_redoStack.Count > 0)
+        {
+            Action lastUndoneAction = _redoStack.Pop();
+            lastUndoneAction.Invoke();
+            _undoStack.Push(lastUndoneAction);
+        }
+        else
+        {
+            Console.WriteLine("Nothing to redo");
         }
     }
 }

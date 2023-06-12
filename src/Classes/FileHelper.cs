@@ -23,10 +23,9 @@ class FileHelper
             return customers;
 
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            Console.WriteLine($"Failed to read from CSV file: {ex.Message}");
-            return null;
+            throw ExceptionHandler.FileException(e.Message);
         }
     }
     public static void WriteFile(string filePath, List<Customer> customers)
@@ -41,9 +40,9 @@ class FileHelper
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            Console.WriteLine($"Failed to write to CSV file: {ex.Message}");
+            throw ExceptionHandler.FileException(e.Message);
         }
     }
 }

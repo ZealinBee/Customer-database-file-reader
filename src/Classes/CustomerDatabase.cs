@@ -12,23 +12,30 @@ class CustomerDatabase
 
     public void AddCustomer(Customer customer)
     {
-        if (_customers.Find(c => c.Email == customer.Email) != null)
+        try
         {
-            Console.WriteLine($"Failed to add email because {customer.Email} already exists");
-        }
-        else
-        {
-            Action addAction = new Action(() =>
+            if (_customers.Find(c => c.Email == customer.Email) != null)
             {
-                _customers.Remove(customer);
+                Console.WriteLine($"Failed to add email because {customer.Email} already exists");
+            }
+            else
+            {
+                Action addAction = new Action(() =>
+                {
+                    _customers.Remove(customer);
+                    FileHelper.WriteFile(path, _customers);
+                    Console.WriteLine($"Undo: Customer with the email {customer.Email} removed");
+                });
+                _undoStack.Push(addAction);
+                _redoStack.Clear();
+                _customers.Add(customer);
                 FileHelper.WriteFile(path, _customers);
-                Console.WriteLine($"Undo: Customer with the email {customer.Email} removed");
-            });
-            _undoStack.Push(addAction);
-            _redoStack.Clear();
-            _customers.Add(customer);
-            FileHelper.WriteFile(path, _customers);
-            Console.WriteLine($"Customer with the email {customer.Email} added successfully");
+                Console.WriteLine($"Customer with the email {customer.Email} added successfully");
+            }
+        }
+        catch (Exception e)
+        {
+            throw ExceptionHandler.UpdateDataException(e.Message);
         }
     }
 
@@ -39,51 +46,68 @@ class CustomerDatabase
 
     public void UpdateCustomer(Customer customerToUpdate)
     {
-        // Basically first gets the ID of the customer, then find the existing customer by ID, then update the customer based on the input.
-        Customer existingCustomer = SearchCustomerById(customerToUpdate.Id);
-        if (existingCustomer != null)
+        try
         {
-            Customer updatedCustomer = new Customer(existingCustomer.Id, customerToUpdate.FirstName, customerToUpdate.LastName, customerToUpdate.Email, customerToUpdate.Address);
-            Action updateAction = new Action(() =>
+            // Basically first gets the ID of the customer, then find the existing customer by ID, then update the customer based on the input.
+            Customer existingCustomer = SearchCustomerById(customerToUpdate.Id);
+            if (existingCustomer != null)
             {
-                this.UpdateCustomer(existingCustomer);
-                Console.WriteLine($"Undo: Customer with the {existingCustomer.Id} was reverted back");
-            });
-            _undoStack.Push(updateAction);
-            _redoStack.Clear();
-            int index = _customers.IndexOf(existingCustomer);
-            _customers[index] = updatedCustomer;
-            FileHelper.WriteFile(path, _customers);
-            Console.WriteLine($"Customer with the Id of {customerToUpdate.Id} updated successfully");
+                Customer updatedCustomer = new Customer(existingCustomer.Id, customerToUpdate.FirstName, customerToUpdate.LastName, customerToUpdate.Email, customerToUpdate.Address);
+                Action updateAction = new Action(() =>
+                {
+                    this.UpdateCustomer(existingCustomer);
+                    Console.WriteLine($"Undo: Customer with the {existingCustomer.Id} was reverted back");
+                });
+                _undoStack.Push(updateAction);
+                _redoStack.Clear();
+                int index = _customers.IndexOf(existingCustomer);
+                _customers[index] = updatedCustomer;
+                FileHelper.WriteFile(path, _customers);
+                Console.WriteLine($"Customer with the Id of {customerToUpdate.Id} updated successfully");
+            }
+            else
+            {
+                Console.WriteLine("Failed to update, customer not found");
+            }
         }
-        else
+        catch (Exception e)
         {
-            Console.WriteLine("Failed to update, customer not found");
+            throw ExceptionHandler.UpdateDataException(e.Message);
         }
+
     }
 
     public void DeleteCustomer(int id)
     {
-        Customer customerToDelete = SearchCustomerById(id);
-        if (customerToDelete != null)
+        try
         {
-            Action deleteAction = new Action(() =>
+            Customer customerToDelete = SearchCustomerById(id);
+            if (customerToDelete != null)
             {
-                _customers.Add(customerToDelete);
+                Action deleteAction = new Action(() =>
+                {
+                    _customers.Add(customerToDelete);
+                    FileHelper.WriteFile(path, _customers);
+                    Console.WriteLine($"Undo: Customer with the email {customerToDelete.Email} added back");
+                });
+                _undoStack.Push(deleteAction);
+                _redoStack.Clear();
+                _customers.Remove(customerToDelete);
                 FileHelper.WriteFile(path, _customers);
-                Console.WriteLine($"Undo: Customer with the email {customerToDelete.Email} added back");
-            });
-            _undoStack.Push(deleteAction);
-            _redoStack.Clear();
-            _customers.Remove(customerToDelete);
-            FileHelper.WriteFile(path, _customers);
-            Console.WriteLine($"Customer with the email {customerToDelete.Email} deleted successfully");
+                Console.WriteLine($"Customer with the email {customerToDelete.Email} deleted successfully");
 
+            }
+            else
+            {
+                Console.WriteLine("Delete failed, customer don't exist");
+            }
         }
-        else
+        catch (Exception e)
         {
-            Console.WriteLine("Delete failed, customer don't exist");
+            throw ExceptionHandler.UpdateDataException(e.Message);
         }
+
+
     }
 
     public Customer SearchCustomerById(int id)

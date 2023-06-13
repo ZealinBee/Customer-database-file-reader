@@ -20,21 +20,6 @@ class CustomerDatabase
             }
             else
             {
-                Action actions = (() =>
-                {
-                    Action addAction = new Action(() =>
-                                  {
-                                      _customers.Remove(customer);
-                                      FileHelper.WriteFile(path, _customers);
-                                      Console.WriteLine($"Undo: Customer with the email {customer.Email} removed");
-                                  });
-                    Action redoAddAction = new Action(() =>
-                    {
-                        _customers.Add(customer);
-                        FileHelper.WriteFile(path, _customers);
-                        Console.WriteLine($"Redo: Customer with the email {customer.Email} added");
-                    });
-                });
                 _undoStack.Push(() => DeleteCustomer(customer.Id));
                 _redoStack.Clear();
                 _customers.Add(customer);
@@ -62,21 +47,6 @@ class CustomerDatabase
             if (existingCustomer != null)
             {
                 Customer updatedCustomer = new Customer(existingCustomer.Id, customerToUpdate.FirstName, customerToUpdate.LastName, customerToUpdate.Email, customerToUpdate.Address);
-                Action actions = (() =>
-                {
-                    Action undoAction = new Action(() =>
-                                  {
-                                      this.UpdateCustomer(existingCustomer);
-                                      FileHelper.WriteFile(path, _customers);
-                                      Console.WriteLine($"Undo: Customer with the {existingCustomer.Id} was reverted back");
-                                  });
-                    Action redoAction = new Action(() =>
-                  {
-                      this.UpdateCustomer(customerToUpdate);
-                      FileHelper.WriteFile(path, _customers);
-                      Console.WriteLine($"Redo: Customer with the {existingCustomer.Id} was reverted back");
-                  });
-                });
                 _undoStack.Push(() => UpdateCustomer(existingCustomer));
                 _redoStack.Clear();
                 int index = _customers.IndexOf(existingCustomer);
@@ -103,28 +73,11 @@ class CustomerDatabase
             Customer customerToDelete = SearchCustomerById(id);
             if (customerToDelete != null)
             {
-                Action actions = (() =>
-                {
-                    Action undoAction = new Action(() =>
-                                  {
-                                      _customers.Add(customerToDelete);
-                                      FileHelper.WriteFile(path, _customers);
-                                      Console.WriteLine($"Undo: Customer with the email {customerToDelete.Email} added back");
-                                  });
-                    Action redoAction = new Action(() =>
-                  {
-                      _customers.Remove(customerToDelete);
-                      FileHelper.WriteFile(path, _customers);
-                      Console.WriteLine($"Redo: Customer with the email {customerToDelete.Email} was deleted again");
-                  });
-                });
-
                 _undoStack.Push(() => AddCustomer(customerToDelete));
                 _redoStack.Clear();
                 _customers.Remove(customerToDelete);
                 FileHelper.WriteFile(path, _customers);
                 Console.WriteLine($"Customer with the email {customerToDelete.Email} deleted successfully");
-
             }
             else
             {
@@ -147,7 +100,6 @@ class CustomerDatabase
         if (_undoStack.Count > 0)
         {
             Action lastAction = _undoStack.Pop();
-            Console.WriteLine(lastAction);
             lastAction.Invoke();
         }
         else

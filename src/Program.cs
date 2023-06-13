@@ -70,16 +70,16 @@ class Program
         int id = int.Parse(Console.ReadLine());
 
         Console.Write("First Name: ");
-        string firstName = Console.ReadLine();
+        string? firstName = Console.ReadLine();
 
         Console.Write("Last Name: ");
-        string lastName = Console.ReadLine();
+        string? lastName = Console.ReadLine();
 
         Console.Write("Email: ");
-        string email = Console.ReadLine();
+        string? email = Console.ReadLine();
 
         Console.Write("Address: ");
-        string address = Console.ReadLine();
+        string? address = Console.ReadLine();
         Customer newCustomer = new Customer(id, firstName, lastName, email, address);
         customerDatabase.AddCustomer(newCustomer);
     }
@@ -95,16 +95,16 @@ class Program
             Console.WriteLine("Enter updated customer details:");
 
             Console.Write("First Name: ");
-            string firstName = Console.ReadLine();
+            string? firstName = Console.ReadLine();
 
             Console.Write("Last Name: ");
-            string lastName = Console.ReadLine();
+            string? lastName = Console.ReadLine();
 
             Console.Write("Email: ");
-            string email = Console.ReadLine();
+            string? email = Console.ReadLine();
 
             Console.Write("Address: ");
-            string address = Console.ReadLine();
+            string? address = Console.ReadLine();
             Customer updatedCustomer = new Customer(id, firstName, lastName, email, address);
             customerDatabase.UpdateCustomer(updatedCustomer);
         }

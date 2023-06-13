@@ -148,7 +148,6 @@ class Program
 
     static void Redo()
     {
-        Console.WriteLine("Redid");
         customerDatabase.Redo();
     }
 }

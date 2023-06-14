@@ -1,10 +1,10 @@
 class Customer
 {
-    private int _id;
-    private string? _firstName;
-    private string? _lastName;
-    private string? _email;
-    private string? _address;
+    readonly int _id;
+    readonly string? _firstName;
+    readonly string? _lastName;
+    readonly string? _email;
+    readonly string? _address;
 
     public int Id
     {
